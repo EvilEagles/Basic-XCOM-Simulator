@@ -10,3 +10,9 @@ D:\Dropbox\Other Projects\Programming\C#\BasicXCOMFight\BasicXCOMFight\obj\Debug
 D:\Git Repositories\CSharp-Demos\BasicXCOMFight\BasicXCOMFight\bin\Debug\BasicXCOMFight.exe.config
 D:\Git Repositories\CSharp-Demos\BasicXCOMFight\BasicXCOMFight\obj\Debug\BasicXCOMFight.exe
 D:\Git Repositories\CSharp-Demos\BasicXCOMFight\BasicXCOMFight\obj\Debug\BasicXCOMFight.pdb
+D:\Git Repositories\Basic-XCOM-Simulator\BasicXCOMFight\BasicXCOMFight\bin\Debug\BasicXCOMFight.exe.config
+D:\Git Repositories\Basic-XCOM-Simulator\BasicXCOMFight\BasicXCOMFight\obj\Debug\BasicXCOMFight.exe
+D:\Git Repositories\Basic-XCOM-Simulator\BasicXCOMFight\BasicXCOMFight\obj\Debug\BasicXCOMFight.pdb
+D:\Git Repositories\Basic-XCOM-Simulator\BasicXCOMFight\BasicXCOMFight\bin\Debug\BasicXCOMFight.exe
+D:\Git Repositories\Basic-XCOM-Simulator\BasicXCOMFight\BasicXCOMFight\bin\Debug\BasicXCOMFight.pdb
+D:\Git Repositories\Basic-XCOM-Simulator\BasicXCOMFight\BasicXCOMFight\obj\Debug\BasicXCOMFight.csprojResolveAssemblyReference.cache
