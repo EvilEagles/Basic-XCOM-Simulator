@@ -1,0 +1,12 @@
+D:\Dropbox\Other Projects\Programming\C#\BasicXCOMFight\BasicXCOMFight\bin\Debug\BasicXCOMFight.exe.config
+E:\Dropbox\Other Projects\Programming\C#\BasicXCOMFight\BasicXCOMFight\bin\Debug\BasicXCOMFight.exe.config
+E:\Dropbox\Other Projects\Programming\C#\BasicXCOMFight\BasicXCOMFight\bin\Debug\BasicXCOMFight.exe
+E:\Dropbox\Other Projects\Programming\C#\BasicXCOMFight\BasicXCOMFight\bin\Debug\BasicXCOMFight.pdb
+E:\Dropbox\Other Projects\Programming\C#\BasicXCOMFight\BasicXCOMFight\obj\Debug\BasicXCOMFight.csprojResolveAssemblyReference.cache
+E:\Dropbox\Other Projects\Programming\C#\BasicXCOMFight\BasicXCOMFight\obj\Debug\BasicXCOMFight.exe
+E:\Dropbox\Other Projects\Programming\C#\BasicXCOMFight\BasicXCOMFight\obj\Debug\BasicXCOMFight.pdb
+D:\Dropbox\Other Projects\Programming\C#\BasicXCOMFight\BasicXCOMFight\obj\Debug\BasicXCOMFight.exe
+D:\Dropbox\Other Projects\Programming\C#\BasicXCOMFight\BasicXCOMFight\obj\Debug\BasicXCOMFight.pdb
+D:\Git Repositories\CSharp-Demos\BasicXCOMFight\BasicXCOMFight\bin\Debug\BasicXCOMFight.exe.config
+D:\Git Repositories\CSharp-Demos\BasicXCOMFight\BasicXCOMFight\obj\Debug\BasicXCOMFight.exe
+D:\Git Repositories\CSharp-Demos\BasicXCOMFight\BasicXCOMFight\obj\Debug\BasicXCOMFight.pdb
