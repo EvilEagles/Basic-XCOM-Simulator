@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BasicXCOMFight
 {
-    public class Units
+    public class Unit
     {
         public string name;
         public int hp, maxHP, aim, crit, cover, def;    // stats

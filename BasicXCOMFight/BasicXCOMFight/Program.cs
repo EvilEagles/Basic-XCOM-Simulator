@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace BasicXCOMFight
 {
-    class Program : Units
+    class Program : Unit
     {
         static void Main(string[] args)
         {
             // CREATE CHARACTER
-            Units player = new Units();         
+            Unit player = new Unit();         
             player.getPlayer();
 
             // SELECT ENEMY
-            Units enemy = new Units();
+            Unit enemy = new Unit();
             enemy.enemy_Sectoid();              
 
             // UI AND ACTIONS INSTANCE
@@ -54,12 +54,7 @@ namespace BasicXCOMFight
 
 
                 // PRINTING USER INTERFACE
-                ui.showUI(turn,
-                          distance,
-                          half_cover,
-                          full_cover,
-                          player.name, player.hp, player.maxHP, player.aim, player.def, player.cover,
-                          enemy.name,   enemy.hp,  enemy.maxHP,  enemy.aim,  enemy.def,  enemy.cover);
+                ui.showUI(turn, distance, half_cover, full_cover, player, enemy);
 
                 // BATTLE SCENE
                 while (loop == true)

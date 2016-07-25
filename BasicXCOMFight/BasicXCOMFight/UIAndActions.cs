@@ -13,8 +13,8 @@ namespace BasicXCOMFight
                            int distance, 
                            int half_cover, 
                            int full_cover,
-                           string player_name, int player_hp, int player_maxHP, int player_aim, int player_def, int player_cover,
-                           string enemy_name, int enemy_hp, int enemy_maxHP, int enemy_aim, int enemy_def, int enemy_cover)
+                           Unit player,
+                           Unit enemy)
         {
             Console.WriteLine();
             System.Threading.Thread.Sleep(1500);
@@ -23,25 +23,25 @@ namespace BasicXCOMFight
             Console.WriteLine("| Turn: {0} | Distance: {1}", turn, distance);
             Console.WriteLine("|==========================|");
             Console.WriteLine();
-            Console.WriteLine("Name: {0}", player_name);
-            Console.WriteLine("HP: {0}/{1}", player_hp, player_maxHP);
-            Console.WriteLine("Aim: {0}", player_aim);
-            Console.WriteLine("Defense: {0}", player_def);
-            if (player_cover == half_cover) Console.WriteLine("Cover: Half Cover (+{0} Defense)", half_cover);
-            else if (player_cover == full_cover) Console.WriteLine("Cover: Full Cover (+{0} Defense)", full_cover);
-            else if (player_cover == half_cover * 2) Console.WriteLine("Cover: Half Cover (+{0} Defense) | Hunkered (+{0} Defense)", half_cover);
-            else if (player_cover == full_cover * 2) Console.WriteLine("Cover: Full Cover (+{0} Defense) | Hunkered (+{0} Defense)", full_cover);
+            Console.WriteLine("Name: {0}", player.name);
+            Console.WriteLine("HP: {0}/{1}", player.hp, player.maxHP);
+            Console.WriteLine("Aim: {0}", player.aim);
+            Console.WriteLine("Defense: {0}", player.def);
+            if (player.cover == half_cover) Console.WriteLine("Cover: Half Cover (+{0} Defense)", half_cover);
+            else if (player.cover == full_cover) Console.WriteLine("Cover: Full Cover (+{0} Defense)", full_cover);
+            else if (player.cover == half_cover * 2) Console.WriteLine("Cover: Half Cover (+{0} Defense) | Hunkered (+{0} Defense)", half_cover);
+            else if (player.cover == full_cover * 2) Console.WriteLine("Cover: Full Cover (+{0} Defense) | Hunkered (+{0} Defense)", full_cover);
             Console.WriteLine();
             Console.WriteLine("|=========== VS ===========|");
             Console.WriteLine();
-            Console.WriteLine("Name: {0}", enemy_name);
-            Console.WriteLine("HP: {0}/{1}", enemy_hp, enemy_maxHP);
-            Console.WriteLine("Aim: {0}", enemy_aim);
-            Console.WriteLine("Defense: {0}", enemy_def);
-            if (enemy_cover == half_cover) Console.WriteLine("Cover: Half Cover (+{0} Defense)", half_cover);
-            else if (enemy_cover == full_cover) Console.WriteLine("Cover: Full Cover (+{0} Defense)", full_cover);
-            else if (enemy_cover == half_cover * 2) Console.WriteLine("Cover: Half Cover (+{0} Defense) | Hunkered (+{0} Defense)", half_cover);
-            else if (enemy_cover == full_cover * 2) Console.WriteLine("Cover: Full Cover (+{0} Defense) | Hunkered (+{0} Defense)", full_cover);
+            Console.WriteLine("Name: {0}", enemy.name);
+            Console.WriteLine("HP: {0}/{1}", enemy.hp, enemy.maxHP);
+            Console.WriteLine("Aim: {0}", enemy.aim);
+            Console.WriteLine("Defense: {0}", enemy.def);
+            if (enemy.cover == half_cover) Console.WriteLine("Cover: Half Cover (+{0} Defense)", half_cover);
+            else if (enemy.cover == full_cover) Console.WriteLine("Cover: Full Cover (+{0} Defense)", full_cover);
+            else if (enemy.cover == half_cover * 2) Console.WriteLine("Cover: Half Cover (+{0} Defense) | Hunkered (+{0} Defense)", half_cover);
+            else if (enemy.cover == full_cover * 2) Console.WriteLine("Cover: Full Cover (+{0} Defense) | Hunkered (+{0} Defense)", full_cover);
         }
         // UI: USER COMMANDS
         public void showCommand(int hit_chance, int crit)
