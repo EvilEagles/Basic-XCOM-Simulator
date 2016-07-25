@@ -40,13 +40,10 @@ namespace BasicXCOMFight
             for (int turn = 1; turn >= 1; turn++)
             {
 
-                // PRE-CONDITIONS
-                #region               
+                // PRE-CONDITIONS             
                 if (player.hp <= 0)     // End Program if Player HP <= 0
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("{0} is down. ALIENS WIN!", player.name);
-                    Console.ReadKey();
+                    ui.alienWin(player.name);
                     break;
                 }
                 if (p_hunker == true)   // Check if unit hunkered last turn, if yes then un-hunker
@@ -54,7 +51,7 @@ namespace BasicXCOMFight
                     player.cover /= 2;
                     p_hunker = false;
                 }
-                #endregion
+
 
                 // PRINTING USER INTERFACE
                 ui.showUI(turn,
@@ -64,7 +61,7 @@ namespace BasicXCOMFight
                           player.name, player.hp, player.maxHP, player.aim, player.def, player.cover,
                           enemy.name,   enemy.hp,  enemy.maxHP,  enemy.aim,  enemy.def,  enemy.cover);
 
-
+                // BATTLE SCENE
                 while (loop == true)
                 {
                     // PRE-CONDITIONS
@@ -96,8 +93,7 @@ namespace BasicXCOMFight
                     }
                     else if (input == 2)    // IF: Hunker Down
                     {
-                        ui.hunkerDown(player.name);
-                        player.cover *= 2;
+                        player.cover = ui.hunkerDown(player.name, player.cover);
                         p_hunker = true;
                         break;
                     }
@@ -106,25 +102,25 @@ namespace BasicXCOMFight
                         if (alreadyMoved == false)
                         {
                             distance--;
-                            ui.moveUp(player.name, distance);
+                            player.cover = ui.moveUp(player.name, distance, half_cover, full_cover);
                             alreadyMoved = true;
                         }
                         else
                         {
                             distance--;
-                            ui.moveUp(player.name, distance);
+                            player.cover = ui.moveUp(player.name, distance, half_cover, full_cover);
                             break;
                         }
                     }
-                }
+                }   // END of Loop: XCOM Activity
+
                 // ALIEN TURN
+                ui.alienActivity();
 
                 // PRE-CONDITIONS
                 if (enemy.hp <= 0)      // Check if Enemy's HP <= 0. If yes then end battle
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("{0} is down. XCOM WINS!", enemy.name);
-                    Console.ReadKey();
+                    ui.xcomWin(enemy.name);
                     break;
                 }
                 if (e_hunker == true)   // Check if unit hunkered last turn. If yes then un-hunker
@@ -132,14 +128,16 @@ namespace BasicXCOMFight
                     enemy.cover /= 2;
                     e_hunker = false;
                 }
-                alreadyMoved = false;
+                alreadyMoved = false; 
+
                 while (loop == true)
                 {
                     // Calculating Hit Chance influenced by Distance
                     if (distance >= 7) hit_chance = enemy.aim - player.def - player.cover + ((18 - distance) * 2);
                     else hit_chance = enemy.aim - player.def - player.cover + 22 + ((7 - distance) * 4);
-
-                    if (hit_chance >= 40)   // AI: If hit chance is higher than X% (1)
+                    if (alreadyMoved == true) act_chance = 20;
+                    else act_chance = 0;
+                    if (hit_chance > 40 + act_chance)   // AI: If hit chance is higher than X% (1)
                     {
                         act_chance = 70;
                         dice = rnd.Next(1, 100);
@@ -149,14 +147,12 @@ namespace BasicXCOMFight
                             if (dice <= hit_chance)     //IF: Shot hits
                             {
                                 damage = rnd.Next(1, 3);
-                                Console.Write("ALIEN ACTIVITY! ");
                                 ui.takeShot(enemy.name, player.name, damage);
                                 player.hp -= damage;
                                 break;
                             }
                             else                        //IF: Shot misses
-                            {
-                                Console.Write("ALIEN ACTIVITY! ");
+                            {                                
                                 ui.shotMissed(enemy.name, player.name);
                                 break;
                             }
@@ -167,27 +163,29 @@ namespace BasicXCOMFight
                             dice = rnd.Next(1, 100);
                             if (dice <= act_chance)     // (3) Hunker Down
                             {
-                                Console.Write("ALIEN ACTIVITY! ");
-                                ui.hunkerDown(enemy.name);
-                                enemy.cover *= 2;
+                                enemy.cover = ui.hunkerDown(enemy.name, enemy.cover);
                                 e_hunker = true;
                                 break;
                             }
-                            else
+                            else                        // (3) Move Up
                             {
-                                Console.Write("ALIEN ACTIVITY! ");
-                                distance--;
-                                ui.moveUp(enemy.name, distance);                                
-                                alreadyMoved = true;
+                                if (alreadyMoved == false)
+                                {
+                                    distance--;
+                                    enemy.cover = ui.moveUp(enemy.name, distance, half_cover, full_cover);
+                                    alreadyMoved = true;
+                                }
+                                else
+                                {
+                                    distance--;
+                                    enemy.cover = ui.moveUp(enemy.name, distance, half_cover, full_cover);
+                                }
                             }
                         }
                     }
                     else                                // If (1) is false, then Hunker down
                     {
-                        System.Threading.Thread.Sleep(1000);
-                        Console.WriteLine();
-                        Console.WriteLine("ALIEN ACTIVITY! {0} hunkered down, doubling cover bonus.", enemy.name);
-                        enemy.cover *= 2;
+                        enemy.cover = ui.hunkerDown(enemy.name, enemy.cover);
                         e_hunker = true;
                         break;
                     }

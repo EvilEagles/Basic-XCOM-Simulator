@@ -28,7 +28,9 @@ namespace BasicXCOMFight
             Console.WriteLine("Aim: {0}", player_aim);
             Console.WriteLine("Defense: {0}", player_def);
             if (player_cover == half_cover) Console.WriteLine("Cover: Half Cover (+{0} Defense)", half_cover);
-            else Console.WriteLine("Cover: Full Cover (+{0} Defense)", full_cover);
+            else if (player_cover == full_cover) Console.WriteLine("Cover: Full Cover (+{0} Defense)", full_cover);
+            else if (player_cover == half_cover * 2) Console.WriteLine("Cover: Half Cover (+{0} Defense) | Hunkered (+{0} Defense)", half_cover);
+            else if (player_cover == full_cover * 2) Console.WriteLine("Cover: Full Cover (+{0} Defense) | Hunkered (+{0} Defense)", full_cover);
             Console.WriteLine();
             Console.WriteLine("|=========== VS ===========|");
             Console.WriteLine();
@@ -37,7 +39,9 @@ namespace BasicXCOMFight
             Console.WriteLine("Aim: {0}", enemy_aim);
             Console.WriteLine("Defense: {0}", enemy_def);
             if (enemy_cover == half_cover) Console.WriteLine("Cover: Half Cover (+{0} Defense)", half_cover);
-            else Console.WriteLine("Cover: Full Cover (+{0} Defense)", full_cover);
+            else if (enemy_cover == full_cover) Console.WriteLine("Cover: Full Cover (+{0} Defense)", full_cover);
+            else if (enemy_cover == half_cover * 2) Console.WriteLine("Cover: Half Cover (+{0} Defense) | Hunkered (+{0} Defense)", half_cover);
+            else if (enemy_cover == full_cover * 2) Console.WriteLine("Cover: Full Cover (+{0} Defense) | Hunkered (+{0} Defense)", full_cover);
         }
         // UI: USER COMMANDS
         public void showCommand(int hit_chance, int crit)
@@ -48,7 +52,7 @@ namespace BasicXCOMFight
             Console.WriteLine("1. Take a Shot - Hit Chance: {0}% | Crit Chance: {1}%",
                               hit_chance, crit);
             Console.WriteLine("2. Hunker Down");
-            Console.WriteLine("3. Move Up - Costs 1 Action");
+            Console.WriteLine("3. Move Forward - 1 Action");
             Console.WriteLine("|==========================|");
         }
         // UI: INPUT COMMANDS
@@ -58,8 +62,34 @@ namespace BasicXCOMFight
             int input = Convert.ToInt32(Console.ReadLine());
             return input;
         }
-
-
+        // UI: ALIEN ACTIVITY
+        public void alienActivity()
+        {
+            int scroll_speed = 100;
+            System.Threading.Thread.Sleep(1000);
+            Console.WriteLine();
+            string alienActivity = "ALIEN ACTIVITY!";
+            for (int i = 0; i < alienActivity.Length; i++)
+            {
+                Console.Write(alienActivity[i]);
+                System.Threading.Thread.Sleep(scroll_speed);
+            }
+            Console.WriteLine();
+        }
+        // UI: XCOM WINS
+        public void xcomWin(string enemy_name)
+        {
+            Console.WriteLine();
+            Console.WriteLine("{0} is down. XCOM WINS!", enemy_name);
+            Console.ReadKey();
+        }
+        // UI: ALIEN WINS
+        public void alienWin(string player_name)
+        {
+            Console.WriteLine();
+            Console.WriteLine("{0} is down. XCOM WINS!", player_name);
+            Console.ReadKey();
+        }
 
 
         // ACTION: TAKING SHOT
@@ -77,18 +107,34 @@ namespace BasicXCOMFight
             Console.WriteLine("{0} took a shot at {1}. It is a miss.", user_name, target_name);
         }
         // ACTION: HUNKER DOWN
-        public void hunkerDown(string user_name)
+        public int hunkerDown(string user_name, int user_cover)
         {
             System.Threading.Thread.Sleep(1000);
             Console.WriteLine();
-            Console.WriteLine("{0} hunkered down, doubling cover bonus.", user_name);
+            Console.WriteLine("{0} hunkered down, doubling cover bonus. (+{1} Defense)", user_name, user_cover);
+            int hunker = user_cover * 2;
+            return hunker;
         }
         // ACTION: MOVING UP
-        public void moveUp(string user_name)
+        public int moveUp(string user_name, int distance, int half_cover, int full_cover)
         {
+
             System.Threading.Thread.Sleep(1000);
             Console.WriteLine();
-            Console.WriteLine("{0} closed in. Distance decreased by 1.", user_name);
+            Random rnd = new Random();
+            int dice = rnd.Next(1, 3);
+            if (dice == 1)
+            {
+                Console.WriteLine("{0} moves forward to Full Cover.", user_name);
+                Console.WriteLine("Distance decreased by 1. Current distance: {0}", distance);
+                return full_cover;
+            }
+            else
+            {
+                Console.WriteLine("{0} moves forward to Half Cover.", user_name);
+                Console.WriteLine("Distance decreased by 1. Current distance: {0}", distance);
+                return half_cover;
+            }
         }
 
     }   // END of Class UIAndActions
