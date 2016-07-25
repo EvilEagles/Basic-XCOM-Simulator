@@ -10,11 +10,16 @@ namespace BasicXCOMFight
     {
         static void Main(string[] args)
         {
-            Units player = new Units();         // Creating player's character
+            // CREATE CHARACTER
+            Units player = new Units();         
             player.getPlayer();
 
+            // SELECT ENEMY
             Units enemy = new Units();
-            enemy.enemy_Sectoid();              // Select enemy
+            enemy.enemy_Sectoid();              
+
+            // UI AND ACTIONS INSTANCE
+            UIAndActions ui = new UIAndActions();
 
             // OPERATIONAL VARIABLES
             #region
@@ -50,46 +55,27 @@ namespace BasicXCOMFight
                     p_hunker = false;
                 }
                 #endregion
+
                 // PRINTING USER INTERFACE
-                #region
-                Console.WriteLine();
-                System.Threading.Thread.Sleep(1500);
-                Console.WriteLine("|==========================|");
-                Console.WriteLine("        XCOM ACTIVITY       ");
-                Console.WriteLine("| Turn: {0} | Distance: {1}", turn, distance);
-                Console.WriteLine("|==========================|");
-                Console.WriteLine();
-                Console.WriteLine("Name: {0}", player.name);
-                Console.WriteLine("HP: {0}/{1}", player.hp, player.maxHP);
-                Console.WriteLine("Aim: {0}", player.aim);
-                Console.WriteLine("Defense: {0}", player.def);
-                if (player.cover == half_cover) Console.WriteLine("Cover: Half Cover (+{0} Defense)", half_cover);
-                else Console.WriteLine("Cover: Full Cover (+{0} Defense)", full_cover);
-                Console.WriteLine();
-                Console.WriteLine("|=========== VS ===========|");
-                Console.WriteLine();
-                Console.WriteLine("Name: {0}", enemy.name);
-                Console.WriteLine("HP: {0}/{1}", enemy.hp, enemy.maxHP);
-                Console.WriteLine("Aim: {0}", enemy.aim);
-                Console.WriteLine("Defense: {0}", enemy.def);
-                if (enemy.cover == half_cover) Console.WriteLine("Cover: Half Cover (+{0} Defense)", half_cover);
-                else Console.WriteLine("Cover: Full Cover (+{0} Defense)", full_cover);
-                #endregion
+                ui.showUI(turn,
+                          distance,
+                          half_cover,
+                          full_cover,
+                          player.name, player.hp, player.maxHP, player.aim, player.def, player.cover,
+                          enemy.name,   enemy.hp,  enemy.maxHP,  enemy.aim,  enemy.def,  enemy.cover);
+
 
                 while (loop == true)
                 {
-                    // PRECONDITIONS
-                    #region
+                    // PRE-CONDITIONS
                     if (distance >= 7) hit_chance = player.aim - enemy.def - enemy.cover + ((18 - distance) * 2);
                     else hit_chance = player.aim - enemy.def - enemy.cover + 22 + ((7 - distance) * 4);
-                    #endregion
 
-                    UIAndActions ui = new UIAndActions();
+                    // SHOW COMMANDS                    
                     ui.showCommand(hit_chance, player.crit);
 
                     // INPUT COMMANDS
-                    Console.Write("Command: ");
-                    input = Convert.ToInt32(Console.ReadLine());
+                    input = ui.inputCommand();
 
                     // XCOM TURN
                     if (input == 1)         // IF: Take a Shot
@@ -98,10 +84,7 @@ namespace BasicXCOMFight
                         if (dice <= hit_chance)     // IF: Shot hits
                         {
                             damage = rnd.Next(1, 3);
-                            System.Threading.Thread.Sleep(1000);
-                            Console.WriteLine();
-                            Console.WriteLine("{0} took an accurate shot and {1} took {2} damage.",
-                                                                  player.name, enemy.name, damage);
+                            ui.takeShot(player.name, enemy.name, damage);
                             enemy.hp -= damage;
                             break;
                         }
@@ -113,9 +96,7 @@ namespace BasicXCOMFight
                     }
                     else if (input == 2)    // IF: Hunker Down
                     {
-                        System.Threading.Thread.Sleep(1000);
-                        Console.WriteLine();
-                        Console.WriteLine("{0} hunkered down, doubling cover bonus.", player.name);
+                        ui.hunkerDown(player.name);
                         player.cover *= 2;
                         p_hunker = true;
                         break;
@@ -125,13 +106,13 @@ namespace BasicXCOMFight
                         if (alreadyMoved == false)
                         {
                             distance--;
-                            ui.moveUp(player.name);
+                            ui.moveUp(player.name, distance);
                             alreadyMoved = true;
                         }
                         else
                         {
                             distance--;
-                            ui.moveUp(player.name);
+                            ui.moveUp(player.name, distance);
                             break;
                         }
                     }
@@ -168,18 +149,15 @@ namespace BasicXCOMFight
                             if (dice <= hit_chance)     //IF: Shot hits
                             {
                                 damage = rnd.Next(1, 3);
-                                System.Threading.Thread.Sleep(1000);
-                                Console.WriteLine();
-                                Console.WriteLine("ALIEN ACTIVITY! {1} took an accurate shot and {0} took {2} damage.",
-                                                                      player.name, enemy.name, damage);
+                                Console.Write("ALIEN ACTIVITY! ");
+                                ui.takeShot(enemy.name, player.name, damage);
                                 player.hp -= damage;
                                 break;
                             }
                             else                        //IF: Shot misses
                             {
-                                System.Threading.Thread.Sleep(1000);
-                                Console.WriteLine();
-                                Console.WriteLine("ALIEN ACTIVITY! {1} took a shot at {0}. It is a miss.", player.name, enemy.name);
+                                Console.Write("ALIEN ACTIVITY! ");
+                                ui.shotMissed(enemy.name, player.name);
                                 break;
                             }
                         }
@@ -189,19 +167,17 @@ namespace BasicXCOMFight
                             dice = rnd.Next(1, 100);
                             if (dice <= act_chance)     // (3) Hunker Down
                             {
-                                System.Threading.Thread.Sleep(1000);    
-                                Console.WriteLine();
-                                Console.WriteLine("ALIEN ACTIVITY! {0} hunkered down, doubling cover bonus.", enemy.name);
+                                Console.Write("ALIEN ACTIVITY! ");
+                                ui.hunkerDown(enemy.name);
                                 enemy.cover *= 2;
                                 e_hunker = true;
                                 break;
                             }
                             else
                             {
+                                Console.Write("ALIEN ACTIVITY! ");
                                 distance--;
-                                System.Threading.Thread.Sleep(1000);
-                                Console.WriteLine();
-                                Console.WriteLine("{0} closed in. Distance decreased by 1.", player.name);
+                                ui.moveUp(enemy.name, distance);                                
                                 alreadyMoved = true;
                             }
                         }
