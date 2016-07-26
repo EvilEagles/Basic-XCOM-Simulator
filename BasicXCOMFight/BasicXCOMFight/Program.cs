@@ -24,33 +24,30 @@ namespace BasicXCOMFight
             // OPERATIONAL VARIABLES
             int input;
             int hit_chance;
-            bool p_hunker = false;
-            bool e_hunker = false;
-            bool alreadyMoved = false;
             bool loop = true;
 
             // RNG SYSTEM
             Random rnd = new Random();
             int dice;
+
             int act_chance;
-            int damage;
             int distance = rnd.Next(10, 18);
             int close_range = 7;
 
+            // AI SYSTEM
+            int alreadyMoved_influence = 20;
+            int shootAfterMove_influence = 20;
             for (int turn = 1; turn >= 1; turn++)
             {
-                // PRE-CONDITIONS             
-                if (player.hp <= 0)     // End Program if Player HP <= 0
+                // WIN CHECK            
+                if (player.hp <= 0)     
                 {
                     ui.alienWin(player.name);
                     break;
                 }
-                if (p_hunker == true)   // Check if unit hunkered last turn, if yes then un-hunker
-                {
-                    player.cover /= 2;
-                    p_hunker = false;
-                }
 
+                // UNHUNKER IF HUNKERED
+                ui.unhunker(player);   // Check if unit hunkered last turn, if yes then un-hunker
 
                 // PRINTING USER INTERFACE
                 ui.showUI(turn, distance, half_cover, full_cover, player, enemy);
@@ -60,10 +57,8 @@ namespace BasicXCOMFight
                 {
                     // PRE-CONDITIONS
                     hit_chance = ui.calculateHitChance(distance, close_range, "player", player, enemy);
-
                     // SHOW COMMANDS                    
                     ui.showCommand(hit_chance, player.crit);
-
                     // INPUT COMMANDS
                     input = ui.inputCommand();
 
@@ -73,35 +68,31 @@ namespace BasicXCOMFight
                         dice = rnd.Next(1, 100);
                         if (dice <= hit_chance)     // IF: Shot hits
                         {
-                            damage = rnd.Next(1, 3);
-                            ui.takeShot(player.name, enemy.name, damage);
-                            enemy.hp -= damage;
+                            ui.takeShot(player, enemy);
                             break;
                         }
                         else                        // IF: Shot misses
                         {
-                            ui.shotMissed(player.name, enemy.name);
+                            ui.shotMissed(player, enemy);
                             break;
                         }
                     }
                     else if (input == 2)    // IF: Hunker Down
                     {
-                        player.cover = ui.hunkerDown(player.name, player.cover);
-                        p_hunker = true;
+                        ui.hunkerDown(player);
                         break;
                     }
                     else if (input == 3)    // IF: Move Up
                     {
-                        if (alreadyMoved == false)
+                        if (player.alreadyMoved == false)
                         {
                             distance--;
-                            player.cover = ui.moveUp(player.name, distance, half_cover, full_cover);
-                            alreadyMoved = true;
+                            ui.moveUp(player, distance, half_cover, full_cover);
                         }
                         else
                         {
                             distance--;
-                            player.cover = ui.moveUp(player.name, distance, half_cover, full_cover);
+                            ui.moveUp(player, distance, half_cover, full_cover);
                             break;
                         }
                     }
@@ -110,42 +101,37 @@ namespace BasicXCOMFight
                 // ALIEN TURN
                 ui.alienActivity();
 
-                // PRE-CONDITIONS
+                // WIN CHECK
                 if (enemy.hp <= 0)      // Check if Enemy's HP <= 0. If yes then end battle
                 {
                     ui.xcomWin(enemy.name);
                     break;
                 }
-                if (e_hunker == true)   // Check if unit hunkered last turn. If yes then un-hunker
-                {
-                    enemy.cover /= 2;
-                    e_hunker = false;
-                }
-                alreadyMoved = false; 
+                // UNHUNKER IF HUNKERED
+                ui.unhunker(enemy);   // Check if unit hunkered last turn. If yes then un-hunker
+
+                enemy.alreadyMoved = false;
 
                 while (loop == true)
                 {
                     // Calculating Hit Chance influenced by Distance
                     hit_chance = ui.calculateHitChance(distance, close_range, "enemy", player, enemy);
-                    if (alreadyMoved == true) act_chance = 20;
-                    else act_chance = 0;
-                    if (hit_chance > 40 + act_chance)   // AI: If hit chance is higher than X% (1)
+                    act_chance = ui.AI_alreadyMoved(alreadyMoved_influence, enemy);
+                    if (hit_chance > enemy.hitChanceCheck + act_chance)   // AI: If hit chance is higher than X% (1)
                     {
-                        act_chance = 70;
+                        act_chance = hit_chance + shootAfterMove_influence;
                         dice = rnd.Next(1, 100);
                         if (dice <= act_chance)     // AI: (1) Roll a dice to determine decision. If yes, take a shot (2)
                         {
                             dice = rnd.Next(1, 100);
                             if (dice <= hit_chance)     //IF: Shot hits
                             {
-                                damage = rnd.Next(1, 3);
-                                ui.takeShot(enemy.name, player.name, damage);
-                                player.hp -= damage;
+                                ui.takeShot(enemy, player);
                                 break;
                             }
                             else                        //IF: Shot misses
                             {                                
-                                ui.shotMissed(enemy.name, player.name);
+                                ui.shotMissed(enemy, player);
                                 break;
                             }
                         }
@@ -155,30 +141,28 @@ namespace BasicXCOMFight
                             dice = rnd.Next(1, 100);
                             if (dice <= act_chance)     // (3) Hunker Down
                             {
-                                enemy.cover = ui.hunkerDown(enemy.name, enemy.cover);
-                                e_hunker = true;
+                                ui.hunkerDown(enemy);
                                 break;
                             }
                             else                        // (3) Move Up
                             {
-                                if (alreadyMoved == false)
+                                if (enemy.alreadyMoved == false)
                                 {
                                     distance--;
-                                    enemy.cover = ui.moveUp(enemy.name, distance, half_cover, full_cover);
-                                    alreadyMoved = true;
+                                    ui.moveUp(enemy, distance, half_cover, full_cover);
                                 }
                                 else
                                 {
                                     distance--;
-                                    enemy.cover = ui.moveUp(enemy.name, distance, half_cover, full_cover);
+                                    ui.moveUp(enemy, distance, half_cover, full_cover);
+                                    break;
                                 }
                             }
                         }
                     }
                     else                                // If (1) is false, then Hunker down
                     {
-                        enemy.cover = ui.hunkerDown(enemy.name, enemy.cover);
-                        e_hunker = true;
+                        ui.hunkerDown(enemy);
                         break;
                     }
                 }   // End of Loop: Alien Activity

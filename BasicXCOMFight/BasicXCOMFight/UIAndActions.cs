@@ -8,13 +8,11 @@ namespace BasicXCOMFight
 {
     class UIAndActions
     {
+        // INSTANCING RANDOM CLASS
+        Random rnd = new Random();
+
         // UI: USER INTERFACE
-        public void showUI(int turn, 
-                           int distance, 
-                           int half_cover, 
-                           int full_cover,
-                           Unit player,
-                           Unit enemy)
+        public void showUI(int turn, int distance, int half_cover, int full_cover, Unit player, Unit enemy)
         {
             Console.WriteLine();
             System.Threading.Thread.Sleep(1500);
@@ -93,54 +91,55 @@ namespace BasicXCOMFight
 
 
         // ACTION: TAKING SHOT
-        public void takeShot(string user_name, string target_name, int damage)
+        public void takeShot(Unit user, Unit target)
         {
+            int damage = rnd.Next(1, 3);
             System.Threading.Thread.Sleep(1000);
             Console.WriteLine();
-            Console.WriteLine("{0} took an accurate shot and {1} took {2} damage.", user_name, target_name, damage);
+            Console.WriteLine("{0} took an accurate shot and {1} took {2} damage.", user.name, target.name, damage);
+            target.hp -= damage;
         }
         // ACTION: MISSING SHOT
-        public void shotMissed(string user_name, string target_name)
+        public void shotMissed(Unit user, Unit target)
         {
             System.Threading.Thread.Sleep(1000);
             Console.WriteLine();
-            Console.WriteLine("{0} took a shot at {1}. It is a miss.", user_name, target_name);
+            Console.WriteLine("{0} took a shot at {1}. It is a miss.", user.name, target.name);
         }
         // ACTION: HUNKER DOWN
-        public int hunkerDown(string user_name, int user_cover)
+        public int hunkerDown(Unit user)
         {
             System.Threading.Thread.Sleep(1000);
             Console.WriteLine();
-            Console.WriteLine("{0} hunkered down, doubling cover bonus. (+{1} Defense)", user_name, user_cover);
-            int hunker = user_cover * 2;
+            Console.WriteLine("{0} hunkered down, doubling cover bonus. (+{1} Defense)", user.name, user.cover);
+            int hunker = user.cover * 2;
             return hunker;
         }
         // ACTION: MOVING UP
-        public int moveUp(string user_name, int distance, int half_cover, int full_cover)
+        public void moveUp(Unit user, int distance, int half_cover, int full_cover)
         {
-
             System.Threading.Thread.Sleep(1000);
             Console.WriteLine();
             Random rnd = new Random();
             int dice = rnd.Next(1, 3);
             if (dice == 1)
             {
-                Console.WriteLine("{0} moves forward to Full Cover.", user_name);
+                Console.WriteLine("{0} moves forward to Full Cover.", user.name);
                 Console.WriteLine("Distance decreased by 1. Current distance: {0}", distance);
-                return full_cover;
+                user.cover = full_cover;
             }
             else
             {
-                Console.WriteLine("{0} moves forward to Half Cover.", user_name);
+                Console.WriteLine("{0} moves forward to Half Cover.", user.name);
                 Console.WriteLine("Distance decreased by 1. Current distance: {0}", distance);
-                return half_cover;
+                user.cover = half_cover;
             }
+            user.alreadyMoved = true;
         }
 
         // CALCULATION: CALCULATING HIT CHANCE
         public int calculateHitChance(int distance, int close_range, string user, Unit player, Unit enemy)
         {
-            Program p = new Program();
             int hit_chance;
             if (user == "player")
             {
@@ -153,6 +152,23 @@ namespace BasicXCOMFight
                 if (distance >= close_range) hit_chance = enemy.aim - player.def - player.cover + ((18 - distance) * 2);
                 else hit_chance = enemy.aim - player.def - player.cover + 22 + ((7 - distance) * 4);
                 return hit_chance;
+            }
+        }
+        // CALCULATION: INFLUENCE OF alreadyMoved ON ALIEN ACT CHANCE
+        public int AI_alreadyMoved(int input_ActChance, Unit user)
+        {
+            int act_chance;
+            if (user.alreadyMoved == true) act_chance = input_ActChance;
+            else act_chance = 0;
+            return act_chance;
+        }
+        // CALCULATION: CHECK IF UNIT IS HUNKERED, IF YES THEN UNHUNKER
+        public void unhunker(Unit user)
+        {
+            if (user.hunker == true)
+            {
+                user.cover /= 2;
+                user.hunker = false;
             }
         }
 

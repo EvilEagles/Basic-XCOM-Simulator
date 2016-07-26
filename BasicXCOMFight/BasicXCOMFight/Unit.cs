@@ -10,6 +10,9 @@ namespace BasicXCOMFight
     {
         public string name;
         public int hp, maxHP, aim, crit, cover, def;    // stats
+        public bool hunker = false;
+        public bool alreadyMoved = false;
+        public int hitChanceCheck = 40;
         public const int half_cover = 15;
         public const int full_cover = 25;
         public void getPlayer()
@@ -52,6 +55,7 @@ namespace BasicXCOMFight
             crit = 10;
             cover = half_cover;
             def = 10;
+            hitChanceCheck = 30;
         }
     }
 }
