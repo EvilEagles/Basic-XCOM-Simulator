@@ -12,9 +12,9 @@ namespace BasicXCOMFight
         public int hp, maxHP, aim, crit, cover, def;    // stats
         public bool hunker = false;
         public bool alreadyMoved = false;
-        public int hitChanceCheck = 40;
-        public const int half_cover = 15;
-        public const int full_cover = 25;
+        public int hitChanceCheck = 20;
+        public const int half_cover = 20;
+        public const int full_cover = 35;
         public void getPlayer()
         {
             Console.Write("Please input character name: ");
@@ -25,6 +25,7 @@ namespace BasicXCOMFight
             crit = 0;
             cover = half_cover;
             def = 5;
+            Console.Clear();
         }
         public void enemy_Sectoid()
         {
@@ -55,7 +56,7 @@ namespace BasicXCOMFight
             crit = 10;
             cover = half_cover;
             def = 10;
-            hitChanceCheck = 30;
+            hitChanceCheck = 15; 
         }
     }
 }
