@@ -22,7 +22,6 @@ namespace BasicXCOMFight
             UIAndActions ui = new UIAndActions();
 
             // OPERATIONAL VARIABLES
-            #region
             int input;
             int hit_chance;
             bool p_hunker = false;
@@ -36,10 +35,10 @@ namespace BasicXCOMFight
             int act_chance;
             int damage;
             int distance = rnd.Next(10, 18);
-            #endregion
+            int close_range = 7;
+
             for (int turn = 1; turn >= 1; turn++)
             {
-
                 // PRE-CONDITIONS             
                 if (player.hp <= 0)     // End Program if Player HP <= 0
                 {
@@ -60,8 +59,7 @@ namespace BasicXCOMFight
                 while (loop == true)
                 {
                     // PRE-CONDITIONS
-                    if (distance >= 7) hit_chance = player.aim - enemy.def - enemy.cover + ((18 - distance) * 2);
-                    else hit_chance = player.aim - enemy.def - enemy.cover + 22 + ((7 - distance) * 4);
+                    hit_chance = ui.calculateHitChance(distance, close_range, "player", player, enemy);
 
                     // SHOW COMMANDS                    
                     ui.showCommand(hit_chance, player.crit);
@@ -128,8 +126,7 @@ namespace BasicXCOMFight
                 while (loop == true)
                 {
                     // Calculating Hit Chance influenced by Distance
-                    if (distance >= 7) hit_chance = enemy.aim - player.def - player.cover + ((18 - distance) * 2);
-                    else hit_chance = enemy.aim - player.def - player.cover + 22 + ((7 - distance) * 4);
+                    hit_chance = ui.calculateHitChance(distance, close_range, "enemy", player, enemy);
                     if (alreadyMoved == true) act_chance = 20;
                     else act_chance = 0;
                     if (hit_chance > 40 + act_chance)   // AI: If hit chance is higher than X% (1)

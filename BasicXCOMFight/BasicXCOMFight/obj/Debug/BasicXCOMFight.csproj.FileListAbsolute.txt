@@ -16,3 +16,6 @@ D:\Git Repositories\Basic-XCOM-Simulator\BasicXCOMFight\BasicXCOMFight\obj\Debug
 D:\Git Repositories\Basic-XCOM-Simulator\BasicXCOMFight\BasicXCOMFight\bin\Debug\BasicXCOMFight.exe
 D:\Git Repositories\Basic-XCOM-Simulator\BasicXCOMFight\BasicXCOMFight\bin\Debug\BasicXCOMFight.pdb
 D:\Git Repositories\Basic-XCOM-Simulator\BasicXCOMFight\BasicXCOMFight\obj\Debug\BasicXCOMFight.csprojResolveAssemblyReference.cache
+C:\Users\Vu Tri Hung\Desktop\Basic-XCOM-Simulator-master\BasicXCOMFight\BasicXCOMFight\bin\Debug\BasicXCOMFight.exe.config
+C:\Users\Vu Tri Hung\Desktop\Basic-XCOM-Simulator-master\BasicXCOMFight\BasicXCOMFight\obj\Debug\BasicXCOMFight.exe
+C:\Users\Vu Tri Hung\Desktop\Basic-XCOM-Simulator-master\BasicXCOMFight\BasicXCOMFight\obj\Debug\BasicXCOMFight.pdb

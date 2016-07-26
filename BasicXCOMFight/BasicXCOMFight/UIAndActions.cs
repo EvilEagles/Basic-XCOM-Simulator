@@ -137,5 +137,24 @@ namespace BasicXCOMFight
             }
         }
 
+        // CALCULATION: CALCULATING HIT CHANCE
+        public int calculateHitChance(int distance, int close_range, string user, Unit player, Unit enemy)
+        {
+            Program p = new Program();
+            int hit_chance;
+            if (user == "player")
+            {
+                if (distance >= close_range) hit_chance = player.aim - enemy.def - enemy.cover + ((18 - distance) * 2);
+                else hit_chance = player.aim - enemy.def - enemy.cover + 22 + ((7 - distance) * 4);
+                return hit_chance;
+            }
+            else
+            {
+                if (distance >= close_range) hit_chance = enemy.aim - player.def - player.cover + ((18 - distance) * 2);
+                else hit_chance = enemy.aim - player.def - player.cover + 22 + ((7 - distance) * 4);
+                return hit_chance;
+            }
+        }
+
     }   // END of Class UIAndActions
 }   // END of namespace BasicXCOMFight
