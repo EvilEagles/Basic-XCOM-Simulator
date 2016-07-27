@@ -27,7 +27,7 @@ namespace BasicXCOMFight
 
             // RNG SYSTEM
             Random rnd = new Random();
-            int dice;
+            int actionTaken;
 
             int distance = rnd.Next(10, 18);
             int close_range = 7;
@@ -45,7 +45,7 @@ namespace BasicXCOMFight
 
             int minPercent = 0;
             int maxPercent = 0;
-            // BATTLE SCENE
+            // XCOM TURN
             for (int turn = 1; turn >= 1; turn++)
             {
                 // WIN CHECK            
@@ -61,7 +61,8 @@ namespace BasicXCOMFight
                 // PRINTING USER INTERFACE
                 ui.showUI(turn, distance, half_cover, full_cover, player, enemy);
 
-                // BATTLE SCENE
+                // XCOM TURN: ACTION BEGINS
+                loop = true;
                 while (loop == true)
                 {
                     // PRE-CONDITIONS
@@ -71,42 +72,22 @@ namespace BasicXCOMFight
                     // INPUT COMMANDS
                     input = ui.inputCommand();
 
-                    // XCOM TURN
+                    // XCOM TURN: ACTIONS
                     Console.Clear();
-                    if (input == 1)         // IF: Take a Shot
+                    switch (input)
                     {
-                        dice = rnd.Next(1, 100);
-                        if (dice <= hitChance)     // IF: Shot hits
-                        {
-                            ui.takeShot(player, enemy);
+                        case 1:
+                            ui.takeShot(player, enemy, hitChance);
+                            loop = false;
                             break;
-                        }
-                        else                        // IF: Shot misses
-                        {
-                            ui.shotMissed(player, enemy);
+                        case 2:
+                            ui.hunkerDown(player);
+                            loop = false;
                             break;
-                        }
-                    }
-                    else if (input == 2)    // IF: Hunker Down
-                    {
-                        ui.hunkerDown(player);
-                        break;
-                    }
-                    else if (input == 3)    // IF: Move Up
-                    {
-                        if (player.alreadyMoved == false)
-                        {
+                        case 3:
                             distance--;
-                            ui.moveUp(player, distance, half_cover, full_cover);
-                            player.alreadyMoved = true;
-                        }
-                        else
-                        {
-                            distance--;
-                            ui.moveUp(player, distance, half_cover, full_cover);
-                            player.alreadyMoved = false;
+                            loop = ui.moveUp(player, distance, half_cover, full_cover);
                             break;
-                        }
                     }
                 }   // END of Loop: XCOM Activity
 
@@ -122,6 +103,8 @@ namespace BasicXCOMFight
                 // UNHUNKER IF HUNKERED
                 ui.unhunker(enemy);   // Check if unit hunkered last turn. If yes then un-hunker
 
+                // XCOM TURN: ACTION BEGINS
+                loop = true;
                 while (loop == true)
                 {
                     // CALCULATING TAKE SHOT PERCENT
@@ -137,47 +120,29 @@ namespace BasicXCOMFight
                     move_influence = ui.calculateMoving_influence(takeShotPercent, enemy, full_cover);
                     movePercent = Convert.ToInt32((100 - takeShotPercent - hunkerPercent) * move_influence);
 
-                    // ROLLING THE DICE
-                    dice = rnd.Next(1, 100);
+                    // ROLLING THE ACTION CHANCE DICE
+                    actionTaken = rnd.Next(1, 100);
 
                     // TAKE A SHOT
                     minPercent = maxPercent;
                     maxPercent += takeShotPercent;
-                    if (dice > minPercent && dice <= maxPercent)            
+                    if (actionTaken > minPercent && actionTaken <= maxPercent)            
                     {
-                        dice = rnd.Next(1, 100);
-                        if (dice <= hitChance)     //IF: Shot hits
-                        {
-                            ui.takeShot(enemy, player);
-                            break;
-                        }
-                        else                        //IF: Shot misses
-                        {
-                            ui.shotMissed(enemy, player);
-                            break;
-                        }
+                        ui.takeShot(enemy, player, hitChance);
+                        break;
                     }
 
                     // MOVE UP
                     minPercent = maxPercent;
                     maxPercent += movePercent;
-                    if (dice > minPercent && dice <= maxPercent)
+                    if (actionTaken > minPercent && actionTaken <= maxPercent)
                     {
-                        if (enemy.alreadyMoved == false)
-                        {
-                            distance--;
-                            ui.moveUp(enemy, distance, half_cover, full_cover);
-                            enemy.alreadyMoved = true;
-                        }
-                        else
-                        {
-                            distance--;
-                            ui.moveUp(enemy, distance, half_cover, full_cover);
-                            player.alreadyMoved = false;
-                            break;
-                        }
+                        distance--;
+                        loop = ui.moveUp(enemy, distance, half_cover, full_cover);
                     }
-                    else                              
+
+                    // HUNKER DOWN
+                    else
                     {
                         ui.hunkerDown(enemy);
                         break;

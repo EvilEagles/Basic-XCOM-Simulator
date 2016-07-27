@@ -40,6 +40,9 @@ namespace BasicXCOMFight
             else if (enemy.cover == full_cover) Console.WriteLine("Cover: Full Cover (+{0} Defense)", full_cover);
             else if (enemy.cover == half_cover * 2) Console.WriteLine("Cover: Half Cover (+{0} Defense) | Hunkered (+{0} Defense)", half_cover);
             else if (enemy.cover == full_cover * 2) Console.WriteLine("Cover: Full Cover (+{0} Defense) | Hunkered (+{0} Defense)", full_cover);
+            Console.Write("OVERWATCH: ");
+            if (enemy.overwatch == true) Console.Write("YES\n");
+            else Console.Write("NO\n");
         }
         // UI: USER COMMANDS
         public void showCommand(int hit_chance, int crit)
@@ -91,20 +94,31 @@ namespace BasicXCOMFight
 
 
         // ACTION: TAKING SHOT
-        public void takeShot(Unit user, Unit target)
+        public void takeShot(Unit user, Unit target, int hitChance)
         {
-            int damage = rnd.Next(1, 3);
-            System.Threading.Thread.Sleep(1000);
-            Console.WriteLine();
-            Console.WriteLine("{0} took an accurate shot and {1} took {2} damage.", user.name, target.name, damage);
-            target.hp -= damage;
+            int dice = rnd.Next(1, 100);
+            if (dice <= hitChance)     // IF: Shot hits
+            {
+                int damage = rnd.Next(1, 3);
+                System.Threading.Thread.Sleep(1000);
+                Console.WriteLine();
+                Console.WriteLine("{0} took an accurate shot and {1} took {2} damage.", user.name, target.name, damage);
+                target.hp -= damage;
+            }
+            else                        // IF: Shot misses
+            {
+                System.Threading.Thread.Sleep(1000);
+                Console.WriteLine();
+                Console.WriteLine("{0} took a shot at {1}. It is a miss.", user.name, target.name);
+            }
         }
-        // ACTION: MISSING SHOT
-        public void shotMissed(Unit user, Unit target)
+        // ACTION: GO INTO OVERWATCH
+        public void overwatch(Unit user)
         {
             System.Threading.Thread.Sleep(1000);
             Console.WriteLine();
-            Console.WriteLine("{0} took a shot at {1}. It is a miss.", user.name, target.name);
+            Console.WriteLine("{0} went into Overwatch.", user.name);
+            user.overwatch = true;
         }
         // ACTION: HUNKER DOWN
         public int hunkerDown(Unit user)
@@ -116,23 +130,44 @@ namespace BasicXCOMFight
             return hunker;
         }
         // ACTION: MOVING UP
-        public void moveUp(Unit user, int distance, int half_cover, int full_cover)
+        public bool moveUp(Unit user, int distance, int half_cover, int full_cover)
         {
             System.Threading.Thread.Sleep(1000);
             Console.WriteLine();
             Random rnd = new Random();
-            int dice = rnd.Next(1, 3);
-            if (dice == 1)
+            if (user.alreadyMoved == false)
             {
-                Console.WriteLine("{0} moves forward to Full Cover.", user.name);
+                int dice = rnd.Next(1, 3);
+                if (dice == 1)
+                {
+                    Console.WriteLine("{0} moves forward to Full Cover.", user.name);                    
+                    user.cover = full_cover;
+                }
+                else
+                {
+                    Console.WriteLine("{0} moves forward to Half Cover.", user.name);                    
+                    user.cover = half_cover;
+                }
                 Console.WriteLine("Distance decreased by 1. Current distance: {0}", distance);
-                user.cover = full_cover;                
+                user.alreadyMoved = true;
+                return true;
             }
             else
             {
-                Console.WriteLine("{0} moves forward to Half Cover.", user.name);
+                int dice = rnd.Next(1, 3);
+                if (dice == 1)
+                {
+                    Console.WriteLine("{0} moves forward to Full Cover.", user.name);
+                    user.cover = full_cover;
+                }
+                else
+                {
+                    Console.WriteLine("{0} moves forward to Half Cover.", user.name);
+                    user.cover = half_cover;
+                }
                 Console.WriteLine("Distance decreased by 1. Current distance: {0}", distance);
-                user.cover = half_cover;
+                user.alreadyMoved = false;
+                return false;
             }
         }
 

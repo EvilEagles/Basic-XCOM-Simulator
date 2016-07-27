@@ -10,8 +10,9 @@ namespace BasicXCOMFight
     {
         public string name;
         public int hp, maxHP, aim, crit, cover, def;    // stats
-        public bool hunker = false;
-        public bool alreadyMoved = false;
+        public bool hunker;
+        public bool alreadyMoved;
+        public bool overwatch;
         public int hitChanceCheck = 20;
         public const int half_cover = 20;
         public const int full_cover = 35;
