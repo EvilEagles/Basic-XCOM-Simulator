@@ -15,5 +15,6 @@ Features present in the current build (v0.6):
 Changelog (v.06):
 - Added Overwatch ingame function
 - Added new AI behaviors with regards to the new Overwatch function
+- Added a basic "visual" HP bar next to the numeral HP stat
 - Fixed a critical (read: stupid) AI modifier error
 
