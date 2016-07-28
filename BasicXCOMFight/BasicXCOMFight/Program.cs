@@ -6,45 +6,23 @@ using System.Threading.Tasks;
 
 namespace BasicXCOMFight
 {
-    class Program : Unit
+    class Program
     {
-        static void Main(string[] args)
+        public void xcom()
         {
             // CREATE CHARACTER
             Unit player = new Unit();         
             player.getPlayer();
-
             // SELECT ENEMY
             Unit enemy = new Unit();
-            enemy.enemy_Sectoid();              
+            enemy.enemy_Sectoid();
+            // UI INSTANCE
+            UI ui = new UI();
+            // ACTION INSTANCE
+            Action action = new Action();
+            // CALCULATION INSTANCE
+            Calculation calc = new Calculation();
 
-            // UI AND ACTIONS INSTANCE
-            UIAndActions ui = new UIAndActions();
-
-            // OPERATIONAL VARIABLES
-            int input;
-            bool loop = true;
-
-            // RNG SYSTEM
-            Random rnd = new Random();
-            int actionTaken;
-
-            int distance = rnd.Next(10, 18);
-            int close_range = 7;
-
-            // AI SYSTEM
-            int hitChance;
-            double takeShot_influence = 0;
-            int takeShotPercent = 0;
-
-            double hunker_influence = 0;
-            int hunkerPercent = 0;
-
-            double move_influence = 0;
-            int movePercent = 0;
-
-            int minPercent = 0;
-            int maxPercent = 0;
             // XCOM TURN
             for (int turn = 1; turn >= 1; turn++)
             {
@@ -56,37 +34,38 @@ namespace BasicXCOMFight
                 }
 
                 // UNHUNKER IF HUNKERED
-                ui.unhunker(player);   // Check if unit hunkered last turn, if yes then un-hunker
+                calc.unhunker(player);   // Check if unit hunkered last turn, if yes then un-hunker
 
                 // PRINTING USER INTERFACE
-                ui.showUI(turn, distance, half_cover, full_cover, player, enemy);
+                ui.distance = calc.diceroll(10, 18);
+                ui.showUI(turn, ui.distance, ui.half_cover, ui.full_cover, player, enemy);
 
                 // XCOM TURN: ACTION BEGINS
-                loop = true;
-                while (loop == true)
+                ui.loop = true;
+                while (ui.loop == true)
                 {
                     // PRE-CONDITIONS
-                    hitChance = ui.calculateHitChance(distance, close_range, player, enemy);
+                    calc.hitChance =calc.calculateHitChance(ui.distance, ui.close_range, player, enemy);
                     // SHOW COMMANDS                    
-                    ui.showCommand(hitChance, player.crit);
+                    ui.showCommand(calc.hitChance, player.crit);
                     // INPUT COMMANDS
-                    input = ui.inputCommand();
+                    ui.input = ui.inputCommand();
 
                     // XCOM TURN: ACTIONS
                     Console.Clear();
-                    switch (input)
+                    switch (ui.input)
                     {
                         case 1:
-                            ui.takeShot(player, enemy, hitChance);
-                            loop = false;
+                            action.takeShot(player, enemy, calc.hitChance);
+                            ui.loop = false;
                             break;
                         case 2:
-                            ui.hunkerDown(player);
-                            loop = false;
+                            action.hunkerDown(player);
+                            ui.loop = false;
                             break;
                         case 3:
-                            distance--;
-                            loop = ui.moveUp(player, distance, half_cover, full_cover);
+                            ui.distance--;
+                            ui.loop = action.moveUp(player, ui.distance, ui.half_cover, ui.full_cover);
                             break;
                     }
                 }   // END of Loop: XCOM Activity
@@ -101,50 +80,50 @@ namespace BasicXCOMFight
                     break;
                 }
                 // UNHUNKER IF HUNKERED
-                ui.unhunker(enemy);   // Check if unit hunkered last turn. If yes then un-hunker
+                calc.unhunker(enemy);   // Check if unit hunkered last turn. If yes then un-hunker
 
                 // XCOM TURN: ACTION BEGINS
-                loop = true;
-                while (loop == true)
+                ui.loop = true;
+                while (ui.loop == true)
                 {
                     // CALCULATING TAKE SHOT PERCENT
-                    hitChance = ui.calculateHitChance(distance, close_range, enemy, player);
-                    takeShot_influence = ui.calculateTakeShot_influence(hitChance, enemy, player);
-                    takeShotPercent = Convert.ToInt32(100 * takeShot_influence);
+                    calc.hitChance = calc.calculateHitChance(ui.distance, ui.close_range, enemy, player);
+                    calc.takeShot_influence = calc.calculateTakeShot_influence(calc.hitChance, enemy, player);
+                    calc.takeShotPercent = Convert.ToInt32(100 * calc.takeShot_influence);
 
                     // CALCULATING HUNKER DOWN PERCENT
-                    hunker_influence = ui.calculateHunkering_influence(takeShotPercent, enemy, half_cover);
-                    hunkerPercent = Convert.ToInt32((100 - takeShotPercent) * hunker_influence);
+                    calc.hunker_influence = calc.calculateHunkering_influence(calc.takeShotPercent, enemy, ui.half_cover);
+                    calc.hunkerPercent = Convert.ToInt32((100 - calc.takeShotPercent) * calc.hunker_influence);
 
                     // CALCULATING MOVE PERCENT
-                    move_influence = ui.calculateMoving_influence(takeShotPercent, enemy, full_cover);
-                    movePercent = Convert.ToInt32((100 - takeShotPercent - hunkerPercent) * move_influence);
+                    calc.move_influence = calc.calculateMoving_influence(calc.takeShotPercent, enemy, ui.full_cover);
+                    calc.movePercent = Convert.ToInt32((100 - calc.takeShotPercent - calc.hunkerPercent) * calc.move_influence);
 
                     // ROLLING THE ACTION CHANCE DICE
-                    actionTaken = rnd.Next(1, 100);
+                    calc.actionTaken = calc.diceroll(1, 100);
 
                     // TAKE A SHOT
-                    minPercent = maxPercent;
-                    maxPercent += takeShotPercent;
-                    if (actionTaken > minPercent && actionTaken <= maxPercent)            
+                    calc.minPercent = calc.maxPercent;
+                    calc.maxPercent += calc.takeShotPercent;
+                    if (calc.actionTaken > calc.minPercent && calc.actionTaken <= calc.maxPercent)            
                     {
-                        ui.takeShot(enemy, player, hitChance);
+                        action.takeShot(enemy, player, calc.hitChance);
                         break;
                     }
 
                     // MOVE UP
-                    minPercent = maxPercent;
-                    maxPercent += movePercent;
-                    if (actionTaken > minPercent && actionTaken <= maxPercent)
+                    calc.minPercent = calc.maxPercent;
+                    calc.maxPercent += calc.movePercent;
+                    if (calc.actionTaken > calc.minPercent && calc.actionTaken <= calc.maxPercent)
                     {
-                        distance--;
-                        loop = ui.moveUp(enemy, distance, half_cover, full_cover);
+                        ui.distance--;
+                        ui.loop = action.moveUp(enemy, ui.distance, ui.half_cover, ui.full_cover);
                     }
 
                     // HUNKER DOWN
                     else
                     {
-                        ui.hunkerDown(enemy);
+                        action.hunkerDown(enemy);
                         break;
                     }
                 }   // End of Loop: Alien Activity

@@ -14,8 +14,8 @@ namespace BasicXCOMFight
         public bool alreadyMoved;
         public bool overwatch;
         public int hitChanceCheck = 20;
-        public const int half_cover = 20;
-        public const int full_cover = 35;
+
+        UI ui = new UI();
         public void getPlayer()
         {
             Console.Write("Please input character name: ");
@@ -23,8 +23,8 @@ namespace BasicXCOMFight
             hp = 6;
             maxHP = 6;
             aim = 65;
-            crit = 0;
-            cover = half_cover;
+            crit = 0;            
+            cover = ui.half_cover;
             def = 5;
             Console.Clear();
         }
@@ -35,7 +35,7 @@ namespace BasicXCOMFight
             maxHP = 6;
             aim = 65;
             crit = 0;
-            cover = half_cover;
+            cover = ui.half_cover;
             def = 5;
         }
         public void enemy_Floater()
@@ -55,7 +55,7 @@ namespace BasicXCOMFight
             maxHP = 6;
             aim = 75;
             crit = 10;
-            cover = half_cover;
+            cover = ui.half_cover;
             def = 10;
             hitChanceCheck = 15; 
         }
