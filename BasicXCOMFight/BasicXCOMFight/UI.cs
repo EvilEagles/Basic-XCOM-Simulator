@@ -13,21 +13,24 @@ namespace BasicXCOMFight
         public bool loop = true;
         public int input;
         public int close_range = 7;
-        Calculation calc = new Calculation();
-        public int distance = calc.diceroll(10, 18);
+        public int distance;
 
         // UI: USER INTERFACE
         public void showUI(int turn, int distance, int half_cover, int full_cover, Unit player, Unit enemy)
         {
             Console.WriteLine();
-            System.Threading.Thread.Sleep(1500);
+            System.Threading.Thread.Sleep(1000);
             Console.WriteLine("|==========================|");
             Console.WriteLine("        XCOM ACTIVITY       ");
             Console.WriteLine("| Turn: {0} | Distance: {1}", turn, distance);
             Console.WriteLine("|==========================|");
             Console.WriteLine();
             Console.WriteLine("Name: {0}", player.name);
-            Console.WriteLine("HP: {0}/{1}", player.hp, player.maxHP);
+            Console.Write("HP: {0}/{1}", player.hp, player.maxHP);
+            Console.Write("   [");
+            for (int i = 1; i <= player.hp; i++) Console.Write("*");
+            for (int i = 1; i <= player.maxHP - player.hp; i++) Console.Write("=");
+            Console.Write("]\n");
             Console.WriteLine("Aim: {0}", player.aim);
             Console.WriteLine("Defense: {0}", player.def);
             if (player.cover == half_cover) Console.WriteLine("Cover: Half Cover (+{0} Defense)", half_cover);
@@ -38,8 +41,11 @@ namespace BasicXCOMFight
             Console.WriteLine("|=========== VS ===========|");
             Console.WriteLine();
             Console.WriteLine("Name: {0}", enemy.name);
-            Console.WriteLine("HP: {0}/{1}", enemy.hp, enemy.maxHP);
-            Console.WriteLine("Aim: {0}", enemy.aim);
+            Console.Write("HP: {0}/{1}", enemy.hp, enemy.maxHP);
+            Console.Write("   [");
+            for (int i = 1; i <= enemy.hp; i++) Console.Write("*");
+            for (int i = 1; i <= enemy.maxHP - enemy.hp; i++) Console.Write("=");
+            Console.Write("]\n");
             Console.WriteLine("Defense: {0}", enemy.def);
             if (enemy.cover == half_cover) Console.WriteLine("Cover: Half Cover (+{0} Defense)", half_cover);
             else if (enemy.cover == full_cover) Console.WriteLine("Cover: Full Cover (+{0} Defense)", full_cover);
@@ -52,13 +58,14 @@ namespace BasicXCOMFight
         // UI: USER COMMANDS
         public void showCommand(int hit_chance, int crit)
         {
-            System.Threading.Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(500);
             Console.WriteLine();
             Console.WriteLine("|========= COMMAND ========|");
             Console.WriteLine("1. Take a Shot - Hit Chance: {0}% | Crit Chance: {1}%",
                               hit_chance, crit);
-            Console.WriteLine("2. Hunker Down");
+            Console.WriteLine("2. Overwatch");
             Console.WriteLine("3. Move Forward - 1 Action");
+            Console.WriteLine("4. Hunker Down");
             Console.WriteLine("|==========================|");
         }
         // UI: INPUT COMMANDS
@@ -68,19 +75,15 @@ namespace BasicXCOMFight
             int input = Convert.ToInt32(Console.ReadLine());
             return input;
         }
-        // UI: ALIEN ACTIVITY
-        public void alienActivity()
-        {
-            int scroll_speed = 100;
-            System.Threading.Thread.Sleep(1000);
-            Console.WriteLine();
-            string alienActivity = "ALIEN ACTIVITY!";
-            for (int i = 0; i < alienActivity.Length; i++)
+        // UI: SLOW PRINT
+        public void slowprint(string text, int scroll_speed)
+        {            
+            System.Threading.Thread.Sleep(500);
+            for (int i = 0; i < text.Length; i++)
             {
-                Console.Write(alienActivity[i]);
+                Console.Write(text[i]);
                 System.Threading.Thread.Sleep(scroll_speed);
             }
-            Console.WriteLine();
         }
         // UI: XCOM WINS
         public void xcomWin(string enemy_name)
@@ -93,7 +96,7 @@ namespace BasicXCOMFight
         public void alienWin(string player_name)
         {
             Console.WriteLine();
-            Console.WriteLine("{0} is down. XCOM WINS!", player_name);
+            Console.WriteLine("{0} is down. ALIENS WIN!", player_name);
             Console.ReadKey();
         }
     }   // END of Class UI

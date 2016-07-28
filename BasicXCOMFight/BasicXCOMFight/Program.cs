@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BasicXCOMFight
 {
-    class Program
+    class Program : Calculation
     {
         public void xcom()
         {
@@ -22,6 +22,8 @@ namespace BasicXCOMFight
             Action action = new Action();
             // CALCULATION INSTANCE
             Calculation calc = new Calculation();
+            // DISTANCE ROLL
+            ui.distance = calc.diceroll(10, 18);
 
             // XCOM TURN
             for (int turn = 1; turn >= 1; turn++)
@@ -36,8 +38,7 @@ namespace BasicXCOMFight
                 // UNHUNKER IF HUNKERED
                 calc.unhunker(player);   // Check if unit hunkered last turn, if yes then un-hunker
 
-                // PRINTING USER INTERFACE
-                ui.distance = calc.diceroll(10, 18);
+                // PRINTING USER INTERFACE                
                 ui.showUI(turn, ui.distance, ui.half_cover, ui.full_cover, player, enemy);
 
                 // XCOM TURN: ACTION BEGINS
@@ -60,18 +61,23 @@ namespace BasicXCOMFight
                             ui.loop = false;
                             break;
                         case 2:
-                            action.hunkerDown(player);
+                            action.overwatch(player);
                             ui.loop = false;
                             break;
                         case 3:
                             ui.distance--;
-                            ui.loop = action.moveUp(player, ui.distance, ui.half_cover, ui.full_cover);
+                            ui.loop = action.moveUp(player, enemy, ui.distance, ui.half_cover, ui.full_cover);
+                            break;
+                        case 4:
+                            action.hunkerDown(player);
+                            ui.loop = false;
                             break;
                     }
                 }   // END of Loop: XCOM Activity
 
-                // ALIEN TURN
-                ui.alienActivity();
+                // ALIEN TURN 
+                Console.WriteLine();               
+                ui.slowprint("ALIEN ACTIVITY!\n", 100);
 
                 // WIN CHECK
                 if (enemy.hp <= 0)      // Check if Enemy's HP <= 0. If yes then end battle
@@ -82,22 +88,26 @@ namespace BasicXCOMFight
                 // UNHUNKER IF HUNKERED
                 calc.unhunker(enemy);   // Check if unit hunkered last turn. If yes then un-hunker
 
-                // XCOM TURN: ACTION BEGINS
+                // ACTION BEGINS
                 ui.loop = true;
                 while (ui.loop == true)
                 {
+                    // RESETTING INFLUENCE LIMITER
+                    calc.minPercent = 0;
+                    calc.maxPercent = 0;
+
                     // CALCULATING TAKE SHOT PERCENT
                     calc.hitChance = calc.calculateHitChance(ui.distance, ui.close_range, enemy, player);
                     calc.takeShot_influence = calc.calculateTakeShot_influence(calc.hitChance, enemy, player);
                     calc.takeShotPercent = Convert.ToInt32(100 * calc.takeShot_influence);
 
-                    // CALCULATING HUNKER DOWN PERCENT
-                    calc.hunker_influence = calc.calculateHunkering_influence(calc.takeShotPercent, enemy, ui.half_cover);
-                    calc.hunkerPercent = Convert.ToInt32((100 - calc.takeShotPercent) * calc.hunker_influence);
+                    // CALCULATING OVERWATCH PERCENT
+                    calc.overwatch_influence = calc.calculateOverwatch_influence(calc.takeShotPercent, enemy, player, ui.half_cover);
+                    calc.overwatchPercent = Convert.ToInt32((100 - calc.takeShotPercent) * calc.overwatch_influence);
 
                     // CALCULATING MOVE PERCENT
-                    calc.move_influence = calc.calculateMoving_influence(calc.takeShotPercent, enemy, ui.full_cover);
-                    calc.movePercent = Convert.ToInt32((100 - calc.takeShotPercent - calc.hunkerPercent) * calc.move_influence);
+                    calc.move_influence = calc.calculateMoving_influence(calc.takeShotPercent, enemy, player, ui.full_cover);
+                    calc.movePercent = Convert.ToInt32((100 - calc.takeShotPercent - calc.overwatchPercent) * calc.move_influence);
 
                     // ROLLING THE ACTION CHANCE DICE
                     calc.actionTaken = calc.diceroll(1, 100);
@@ -111,13 +121,22 @@ namespace BasicXCOMFight
                         break;
                     }
 
+                    // GO INTO OVERWATCH
+                    calc.minPercent = calc.maxPercent;
+                    calc.maxPercent += calc.overwatchPercent;
+                    if (calc.actionTaken > calc.minPercent && calc.actionTaken <= calc.maxPercent)
+                    {
+                        action.overwatch(enemy);
+                        break;
+                    }
+
                     // MOVE UP
                     calc.minPercent = calc.maxPercent;
                     calc.maxPercent += calc.movePercent;
                     if (calc.actionTaken > calc.minPercent && calc.actionTaken <= calc.maxPercent)
                     {
                         ui.distance--;
-                        ui.loop = action.moveUp(enemy, ui.distance, ui.half_cover, ui.full_cover);
+                        ui.loop = action.moveUp(enemy, player, ui.distance, ui.half_cover, ui.full_cover);
                     }
 
                     // HUNKER DOWN

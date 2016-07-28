@@ -12,8 +12,8 @@ namespace BasicXCOMFight
         public double takeShot_influence = 0;
         public int takeShotPercent = 0;
 
-        public double hunker_influence = 0;
-        public int hunkerPercent = 0;
+        public double overwatch_influence = 0;
+        public int overwatchPercent = 0;
 
         public double move_influence = 0;
         public int movePercent = 0;
@@ -47,39 +47,40 @@ namespace BasicXCOMFight
         // CALCULATION: CALCULATING HIT CHANCE INFLUENCE
         public double calculateTakeShot_influence(int hitChance, Unit user, Unit target)
         {
-            double influence = 0;
+            double influence;
             if (hitChance <= user.hitChanceCheck)
-                influence = 0.5;
+                influence = 0;
             else if (hitChance > user.hitChanceCheck && hitChance <= user.hitChanceCheck + 20)
-                influence = 0.6;
+                influence = 0.2;
             else if (hitChance > user.hitChanceCheck + 20 && hitChance <= user.hitChanceCheck + 40)
-                influence = 0.7;
+                influence = 0.4;
             else if (hitChance > user.hitChanceCheck + 40 && hitChance <= user.hitChanceCheck + 60)
-                influence = 0.8;
+                influence = 0.6;
             else
-                influence = 0.9;
+                influence = 0.8;
             if (user.alreadyMoved == true) influence += 0.05;
             if (user.hp <= user.maxHP / 3) influence -= 0.3;
             if (target.hp <= target.maxHP / 3) influence += 0.2;
             return influence;
         }
-        // CALCULATION: CALCULATING HUNKERING INFLUENCE
-        public double calculateHunkering_influence(int takeShotPercent, Unit user, int half_cover)
+        // CALCULATION: CALCULATING OVERWATCHING INFLUENCE
+        public double calculateOverwatch_influence(int takeShotPercent, Unit user, Unit target, int half_cover)
         {
-            double influence = 0;
-            if (takeShotPercent <= 50) influence = 0.5;
-            if (user.hp <= user.maxHP / 3) influence += 0.4;
-            if (user.cover == half_cover) influence -= 0.2;
+            double influence = 0.5;
+            if (takeShotPercent <= 50) influence = 0.8;
+            if (user.hp <= user.maxHP / 3) influence -= 0.5;
+            if (target.cover == half_cover) influence -= 0.2;
             return influence;
         }
         // CALCULATION: CALCULATING MOVING INFLUENCE
-        public double calculateMoving_influence(int takeShotPercent, Unit user, int full_cover)
+        public double calculateMoving_influence(int takeShotPercent, Unit user, Unit target, int full_cover)
         {
             double influence = 1;
-            if (user.cover == full_cover) influence -= 0.8;
-            if (takeShotPercent >= 50) influence -= 0.5;
-            else influence += 0.3;
-            if (user.alreadyMoved == true) influence -= 0.2;
+            if (user.cover == full_cover) influence -= 0.5;
+            if (takeShotPercent >= 50) influence -= 0.2;
+            else influence += 0.5;
+            if (user.alreadyMoved == true) influence -= 0.1;
+            if (target.overwatch == true) influence -= 0.8;
             return influence;
         }
         // CALCULATION: CHECK IF UNIT IS HUNKERED, IF YES THEN UNHUNKER

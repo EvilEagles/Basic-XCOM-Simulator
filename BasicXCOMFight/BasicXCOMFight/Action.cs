@@ -9,48 +9,62 @@ namespace BasicXCOMFight
     class Action
     {
         // INSTANCING RANDOM CLASS
-        Random rnd = new Random();       
+        Random rnd = new Random();
+
+        // INSTANCING UI CLASS
+        UI ui = new UI();
+
+        // INSTANCING CALCULATION CLASS
+        Calculation calc = new Calculation();
+
+        // TEXT TO BE SLOW-PRINTED
+        string text;
+
+        // SLOWPRINT SPEED
+        int slowprint_spd = 20;
 
         // ACTION: TAKING SHOT
         public void takeShot(Unit user, Unit target, int hitChance)
         {
+            Console.WriteLine();
+            text = user.name + " took a shot at " + target.name + ". ";
+            ui.slowprint(text, slowprint_spd);
+            System.Threading.Thread.Sleep(500);
             int dice = rnd.Next(1, 100);
             if (dice <= hitChance)     // IF: Shot hits
             {
                 int damage = rnd.Next(1, 3);
-                System.Threading.Thread.Sleep(1000);
-                Console.WriteLine();
-                Console.WriteLine("{0} took an accurate shot and {1} took {2} damage.", user.name, target.name, damage);
+                text = target.name + " took " + Convert.ToString(damage) + " damage.\n";
+                ui.slowprint(text, slowprint_spd);
                 target.hp -= damage;
             }
             else                        // IF: Shot misses
             {
-                System.Threading.Thread.Sleep(1000);
-                Console.WriteLine();
-                Console.WriteLine("{0} took a shot at {1}. It is a miss.", user.name, target.name);
+                text = "It is a miss.\n";
+                ui.slowprint(text, slowprint_spd);
             }
+            user.overwatch = false;
         }
         // ACTION: GO INTO OVERWATCH
         public void overwatch(Unit user)
         {
-            System.Threading.Thread.Sleep(1000);
             Console.WriteLine();
-            Console.WriteLine("{0} went into Overwatch.", user.name);
+            text = user.name + " went into Overwatch.\n";
+            ui.slowprint(text, slowprint_spd);
             user.overwatch = true;
         }
         // ACTION: HUNKER DOWN
         public int hunkerDown(Unit user)
         {
-            System.Threading.Thread.Sleep(1000);
             Console.WriteLine();
-            Console.WriteLine("{0} hunkered down, doubling cover bonus. (+{1} Defense)", user.name, user.cover);
+            text = user.name + " hunkered down, doubling cover bonus. (+" + Convert.ToString(user.cover) + " Defense)\n";
+            ui.slowprint(text, slowprint_spd);
             int hunker = user.cover * 2;
             return hunker;
         }
         // ACTION: MOVING UP
-        public bool moveUp(Unit user, int distance, int half_cover, int full_cover)
+        public bool moveUp(Unit user, Unit target, int distance, int half_cover, int full_cover)
         {
-            System.Threading.Thread.Sleep(1000);
             Console.WriteLine();
             Random rnd = new Random();
             if (user.alreadyMoved == false)
@@ -58,15 +72,20 @@ namespace BasicXCOMFight
                 int dice = rnd.Next(1, 3);
                 if (dice == 1)
                 {
-                    Console.WriteLine("{0} moves forward to Full Cover.", user.name);
+                    text = user.name + " moves forward towards Full Cover.\n";
+                    ui.slowprint(text, slowprint_spd);
+                    if (target.overwatch == true) takeShot(target, user, calc.hitChance);
                     user.cover = full_cover;
                 }
                 else
                 {
-                    Console.WriteLine("{0} moves forward to Half Cover.", user.name);
+                    text = user.name + " moves forward towards Half Cover.\n";
+                    ui.slowprint(text, slowprint_spd);
+                    if (target.overwatch == true) takeShot(target, user, calc.hitChance);
                     user.cover = half_cover;
                 }
-                Console.WriteLine("Distance decreased by 1. Current distance: {0}", distance);
+                text = "Distance decreased by 1. Current distance: " + Convert.ToString(distance);
+                ui.slowprint(text, slowprint_spd);
                 user.alreadyMoved = true;
                 return true;
             }
@@ -75,15 +94,20 @@ namespace BasicXCOMFight
                 int dice = rnd.Next(1, 3);
                 if (dice == 1)
                 {
-                    Console.WriteLine("{0} moves forward to Full Cover.", user.name);
+                    text = user.name + " moves forward towards Full Cover.\n";
+                    ui.slowprint(text, slowprint_spd);
+                    if (target.overwatch == true) takeShot(target, user, calc.hitChance);
                     user.cover = full_cover;
                 }
                 else
                 {
-                    Console.WriteLine("{0} moves forward to Half Cover.", user.name);
+                    text = user.name + " moves forward towards Full Cover.\n";
+                    ui.slowprint(text, slowprint_spd);
+                    if (target.overwatch == true) takeShot(target, user, calc.hitChance);
                     user.cover = half_cover;
                 }
-                Console.WriteLine("Distance decreased by 1. Current distance: {0}", distance);
+                text = "Distance decreased by 1. Current distance: " + Convert.ToString(distance);
+                ui.slowprint(text, slowprint_spd);
                 user.alreadyMoved = false;
                 return false;
             }
