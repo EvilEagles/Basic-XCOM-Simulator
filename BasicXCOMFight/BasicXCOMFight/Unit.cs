@@ -8,16 +8,25 @@ namespace BasicXCOMFight
 {
     public class Unit
     {
+        // BASIC PROPERTIES & CONDITIONS
         public string name;
-        public int hp, maxHP, aim, crit, cover, def;    // stats
-        public bool hunker;
+        public int hp, maxHP, aim, crit, cover, def;    // stats        
         public bool alreadyMoved;
-        public bool overwatch;
+        
+        // AI ONLY        
         public int hitChanceCheck = 20;
+
+        /* SKILLS & PERKS
+        perks[0]: Hunker Down   
+        perks[1]: Overwatch     
+        perks[2]: Opportunist
+        */
+        public bool[] perks = { false, false, false };
 
         UI ui = new UI();
         public void getPlayer()
         {
+            // STATS
             Console.Write("Please input character name: ");
             name = Console.ReadLine();
             hp = 6;
@@ -50,14 +59,18 @@ namespace BasicXCOMFight
         }
         public void enemy_ThinMan()
         {
+            // STATS
             name = "Thin Man";
             hp = 7;
-            maxHP = 6;
+            maxHP = 7;
             aim = 75;
             crit = 10;
             cover = ui.half_cover;
             def = 10;
-            hitChanceCheck = 15; 
+            hitChanceCheck = 15;
+
+            // SKILLS & PERKS
+            perks[2] = true;
         }
     }
 }

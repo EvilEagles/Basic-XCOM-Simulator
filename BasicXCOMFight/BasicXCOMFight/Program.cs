@@ -15,7 +15,7 @@ namespace BasicXCOMFight
             player.getPlayer();
             // SELECT ENEMY
             Unit enemy = new Unit();
-            enemy.enemy_Sectoid();
+            enemy.enemy_ThinMan();
             // UI INSTANCE
             UI ui = new UI();
             // ACTION INSTANCE
@@ -71,6 +71,10 @@ namespace BasicXCOMFight
                         case 4:
                             action.hunkerDown(player);
                             ui.loop = false;
+                            break;
+                        case 0:
+                            ui.viewPresentPerks(player, enemy);
+                            ui.showUI(turn, ui.distance, ui.half_cover, ui.full_cover, player, enemy);
                             break;
                     }
                 }   // END of Loop: XCOM Activity

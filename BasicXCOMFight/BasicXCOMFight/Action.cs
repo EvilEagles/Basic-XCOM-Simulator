@@ -31,6 +31,7 @@ namespace BasicXCOMFight
             ui.slowprint(text, slowprint_spd);
             System.Threading.Thread.Sleep(500);
             int dice = rnd.Next(1, 100);
+            if (user.perks[1] == true && user.perks[2] == true) hitChance -= user.cover;
             if (dice <= hitChance)     // IF: Shot hits
             {
                 int damage = rnd.Next(1, 3);
@@ -43,7 +44,7 @@ namespace BasicXCOMFight
                 text = "It is a miss.\n";
                 ui.slowprint(text, slowprint_spd);
             }
-            user.overwatch = false;
+            user.perks[1] = false;
         }
         // ACTION: GO INTO OVERWATCH
         public void overwatch(Unit user)
@@ -51,7 +52,7 @@ namespace BasicXCOMFight
             Console.WriteLine();
             text = user.name + " went into Overwatch.\n";
             ui.slowprint(text, slowprint_spd);
-            user.overwatch = true;
+            user.perks[1] = true;
         }
         // ACTION: HUNKER DOWN
         public int hunkerDown(Unit user)
@@ -74,14 +75,14 @@ namespace BasicXCOMFight
                 {
                     text = user.name + " moves forward towards Full Cover.\n";
                     ui.slowprint(text, slowprint_spd);
-                    if (target.overwatch == true) takeShot(target, user, calc.hitChance);
+                    if (target.perks[1] == true) takeShot(target, user, calc.hitChance);
                     user.cover = full_cover;
                 }
                 else
                 {
                     text = user.name + " moves forward towards Half Cover.\n";
                     ui.slowprint(text, slowprint_spd);
-                    if (target.overwatch == true) takeShot(target, user, calc.hitChance);
+                    if (target.perks[1] == true) takeShot(target, user, calc.hitChance);
                     user.cover = half_cover;
                 }
                 text = "Distance decreased by 1. Current distance: " + Convert.ToString(distance);
@@ -89,6 +90,7 @@ namespace BasicXCOMFight
                 user.alreadyMoved = true;
                 return true;
             }
+            // ALREADY MOVED = TRUE
             else
             {
                 int dice = rnd.Next(1, 3);
@@ -96,14 +98,14 @@ namespace BasicXCOMFight
                 {
                     text = user.name + " moves forward towards Full Cover.\n";
                     ui.slowprint(text, slowprint_spd);
-                    if (target.overwatch == true) takeShot(target, user, calc.hitChance);
+                    if (target.perks[1] == true) takeShot(target, user, calc.hitChance);
                     user.cover = full_cover;
                 }
                 else
                 {
                     text = user.name + " moves forward towards Full Cover.\n";
                     ui.slowprint(text, slowprint_spd);
-                    if (target.overwatch == true) takeShot(target, user, calc.hitChance);
+                    if (target.perks[1] == true) takeShot(target, user, calc.hitChance);
                     user.cover = half_cover;
                 }
                 text = "Distance decreased by 1. Current distance: " + Convert.ToString(distance);

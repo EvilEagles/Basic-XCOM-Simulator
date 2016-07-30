@@ -22,7 +22,7 @@ namespace BasicXCOMFight
         public int maxPercent = 0;
 
         Random rnd = new Random();
-        public int actionTaken;        
+        public int actionTaken;      
 
         // CALCULATION: DEFAULT DISTANCE
         public int defaultDistance(int min, int max)
@@ -77,19 +77,22 @@ namespace BasicXCOMFight
         {
             double influence = 1;
             if (user.cover == full_cover) influence -= 0.5;
+            else influence += 0.3;
             if (takeShotPercent >= 50) influence -= 0.2;
             else influence += 0.5;
             if (user.alreadyMoved == true) influence -= 0.1;
-            if (target.overwatch == true) influence -= 0.8;
+            if (target.perks[1] == true && target.perks[2] == true) influence -= 0.8;
+            else if (target.perks[1] == true) influence -= 0.4;
+
             return influence;
         }
         // CALCULATION: CHECK IF UNIT IS HUNKERED, IF YES THEN UNHUNKER
         public void unhunker(Unit user)
         {
-            if (user.hunker == true)
+            if (user.perks[0] == true)
             {
                 user.cover /= 2;
-                user.hunker = false;
+                user.perks[0] = false;
             }
         }
     }
