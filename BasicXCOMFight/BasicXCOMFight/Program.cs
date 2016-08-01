@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BasicXCOMFight
 {
-    class Program
+    class Program : Calculation
     {
         public void xcom()
         {
