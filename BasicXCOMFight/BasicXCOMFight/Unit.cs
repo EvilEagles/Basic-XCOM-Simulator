@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BasicXCOMFight
 {
-    public class Unit
+    class Unit : Program
     {
         // BASIC PROPERTIES & CONDITIONS
         public string name;
@@ -24,6 +24,11 @@ namespace BasicXCOMFight
         public bool[] perks = { false, false, false };
 
         UI ui = new UI();
+        public Unit()
+        {
+            Console.WriteLine("Welcome to Basic XCOM Simulator v0.5!");
+            xcom();
+        }
         public void getPlayer()
         {
             // STATS
@@ -35,6 +40,10 @@ namespace BasicXCOMFight
             crit = 0;            
             cover = ui.half_cover;
             def = 5;
+
+            // SKILLS & PERKS
+            perks[2] = true;
+
             Console.Clear();
         }
         public void enemy_Sectoid()

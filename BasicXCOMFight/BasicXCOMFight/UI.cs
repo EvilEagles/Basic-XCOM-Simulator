@@ -60,13 +60,14 @@ namespace BasicXCOMFight
         public void viewPresentPerks(Unit player, Unit enemy)
         {
             Console.Clear();
-            for (int i = 2; i < player.perks.Length - 2; i++)
+            for (int i = 2; i < player.perks.Length; i++)
             {
                 if (player.perks[i] == true)
                 {
                     Console.WriteLine("|==========================|");
                     Console.WriteLine("|       PLAYER PERKS       |");
                     Console.WriteLine("|==========================|");
+                    Console.WriteLine();
                     break;
                 }
             }
@@ -74,13 +75,15 @@ namespace BasicXCOMFight
             {
                 Console.WriteLine("Opportunist - Eliminates accuracy penalty on Overwatch shots.");
             }
-            for (int i = 0; i < enemy.perks.Length - 2; i++)
+            Console.WriteLine();
+            for (int i = 2; i < enemy.perks.Length; i++)
             {
                 if (enemy.perks[i] == true)
                 {
                     Console.WriteLine("|==========================|");
                     Console.WriteLine("|        ENEMY PERKS       |");
                     Console.WriteLine("|==========================|");
+                    Console.WriteLine();
                     break;
                 }
             }
@@ -88,6 +91,7 @@ namespace BasicXCOMFight
             {
                 Console.WriteLine("Opportunist - Eliminates accuracy penalty on Overwatch shots.");
             }
+            Console.WriteLine();
             Console.WriteLine("Press any key to go back: ");
             Console.ReadKey();
         }
